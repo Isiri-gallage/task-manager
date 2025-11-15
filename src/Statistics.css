@@ -25,17 +25,18 @@
 }
 
 .stat-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
   padding: 25px;
   border-radius: 12px;
   text-align: center;
   color: white;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.25);
   transition: transform 0.2s;
 }
 
 .stat-card:hover {
   transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(52, 152, 219, 0.35);
 }
 
 .stat-value {
