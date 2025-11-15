@@ -158,3 +158,88 @@ h1 {
     display: none;
   }
 }
+
+/* Loading Screen */
+.loading-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  gap: 20px;
+}
+
+.loading-screen i {
+  font-size: 48px;
+}
+
+.loading-screen p {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* User Email Display */
+.user-email {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2c3e50;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.App.dark .user-email {
+  background: #0f3460;
+  color: #e4e4e4;
+}
+
+.user-email i {
+  font-size: 16px;
+  color: #667eea;
+}
+
+.App.dark .user-email i {
+  color: #5dade2;
+}
+
+/* Logout Button */
+.logout-button {
+  padding: 10px 16px;
+  background: #e74c3c;
+  color: white;
+  border: 2px solid #e74c3c;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout-button:hover {
+  background: #c0392b;
+  border-color: #c0392b;
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .user-email {
+    max-width: 100px;
+    font-size: 12px;
+  }
+  
+  .header-buttons {
+    gap: 5px;
+  }
+}

@@ -1,4 +1,8 @@
 import { useState, useEffect } from 'react';
+import { auth, db } from './firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, where, orderBy } from 'firebase/firestore';
+import Auth from './Auth';
 import './App.css';
 import TaskInput from './TaskInput';
 import TaskList from './TaskList';
@@ -8,29 +12,30 @@ import SearchBar from './SearchBar';
 import ExportButtons from './ExportButtons';
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [darkMode, setDarkMode] = useState(false);
   const [showStats, setShowStats] = useState(false);
 
-  // Load tasks from localStorage on mount
+  // Check authentication state
   useEffect(() => {
-    const savedTasks = localStorage.getItem('tasks');
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks));
-    }
-    
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Load dark mode preference
+  useEffect(() => {
     const savedDarkMode = localStorage.getItem('darkMode');
     if (savedDarkMode) {
       setDarkMode(JSON.parse(savedDarkMode));
     }
   }, []);
-
-  // Save tasks to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }, [tasks]);
 
   // Save dark mode preference
   useEffect(() => {
@@ -41,6 +46,48 @@ function App() {
       document.body.classList.remove('dark-mode');
     }
   }, [darkMode]);
+
+  // Load tasks from Firestore when user logs in
+  useEffect(() => {
+    if (user) {
+      loadTasksFromFirestore();
+    } else {
+      setTasks([]);
+    }
+  }, [user]);
+
+  const loadTasksFromFirestore = async () => {
+    try {
+      const q = query(
+        collection(db, 'tasks'),
+        where('userId', '==', user.uid),
+        orderBy('createdAt', 'desc')
+      );
+      const querySnapshot = await getDocs(q);
+      const tasksData = querySnapshot.docs.map(docSnap => ({
+        id: docSnap.id,
+        ...docSnap.data()
+      }));
+      setTasks(tasksData);
+    } catch (error) {
+      console.error('Error loading tasks:', error);
+      // If orderBy fails (no index), try without it
+      try {
+        const q = query(
+          collection(db, 'tasks'),
+          where('userId', '==', user.uid)
+        );
+        const querySnapshot = await getDocs(q);
+        const tasksData = querySnapshot.docs.map(docSnap => ({
+          id: docSnap.id,
+          ...docSnap.data()
+        }));
+        setTasks(tasksData);
+      } catch (err) {
+        console.error('Error loading tasks (fallback):', err);
+      }
+    }
+  };
 
   // Helper function to calculate next due date
   const calculateNextDueDate = (currentDate, recurring) => {
@@ -65,68 +112,108 @@ function App() {
     return date.toISOString().split('T')[0];
   };
 
-  // Add a new task with recurring support
-  const addTask = (text, priority, dueDate, category, recurring) => {
+  // Add task to Firestore
+  const addTask = async (text, priority, dueDate, category, recurring) => {
     const newTask = {
-      id: Date.now(),
-      text: text,
+      text,
       completed: false,
-      priority: priority,
-      dueDate: dueDate,
-      category: category,
+      priority,
+      dueDate,
+      category,
       recurring: recurring || 'none',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      userId: user.uid
     };
-    setTasks([newTask, ...tasks]);
-  };
 
-  // Toggle task completion with recurring support
-  const toggleTask = (id) => {
-    const task = tasks.find(t => t.id === id);
-    
-    // If task is recurring and being completed, create a new instance
-    if (!task.completed && task.recurring !== 'none') {
-      const newDueDate = calculateNextDueDate(task.dueDate, task.recurring);
-      const newTask = {
-        ...task,
-        id: Date.now(),
-        dueDate: newDueDate,
-        completed: false,
-        createdAt: new Date().toISOString()
-      };
-      
-      // Mark current task as completed and add new recurring task
-      setTasks([newTask, ...tasks.map(t => 
-        t.id === id ? { ...t, completed: true } : t
-      )]);
-    } else {
-      // Normal toggle for non-recurring tasks
-      setTasks(tasks.map(task =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      ));
+    try {
+      const docRef = await addDoc(collection(db, 'tasks'), newTask);
+      setTasks([{ id: docRef.id, ...newTask }, ...tasks]);
+    } catch (error) {
+      console.error('Error adding task:', error);
+      alert('Failed to add task. Please try again.');
     }
   };
 
-  // Delete a task
-  const deleteTask = (id) => {
-    setTasks(tasks.filter(task => task.id !== id));
+  // Toggle task completion with recurring support
+  const toggleTask = async (id) => {
+    const task = tasks.find(t => t.id === id);
+    
+    try {
+      // If task is recurring and being completed, create a new instance
+      if (!task.completed && task.recurring !== 'none') {
+        const newDueDate = calculateNextDueDate(task.dueDate, task.recurring);
+        const newTask = {
+          text: task.text,
+          completed: false,
+          priority: task.priority,
+          dueDate: newDueDate,
+          category: task.category,
+          recurring: task.recurring,
+          createdAt: new Date().toISOString(),
+          userId: user.uid
+        };
+        
+        // Add new recurring task
+        const docRef = await addDoc(collection(db, 'tasks'), newTask);
+        
+        // Mark current task as completed
+        await updateDoc(doc(db, 'tasks', id), { completed: true });
+        
+        // Update local state
+        setTasks([{ id: docRef.id, ...newTask }, ...tasks.map(t => 
+          t.id === id ? { ...t, completed: true } : t
+        )]);
+      } else {
+        // Normal toggle for non-recurring tasks
+        await updateDoc(doc(db, 'tasks', id), { completed: !task.completed });
+        setTasks(tasks.map(t =>
+          t.id === id ? { ...t, completed: !t.completed } : t
+        ));
+      }
+    } catch (error) {
+      console.error('Error toggling task:', error);
+      alert('Failed to update task. Please try again.');
+    }
   };
 
-  // Edit a task
-  const editTask = (id, newText) => {
-    setTasks(tasks.map(task =>
-      task.id === id ? { ...task, text: newText } : task
-    ));
+  // Delete a task from Firestore
+  const deleteTask = async (id) => {
+    try {
+      await deleteDoc(doc(db, 'tasks', id));
+      setTasks(tasks.filter(task => task.id !== id));
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      alert('Failed to delete task. Please try again.');
+    }
   };
 
-  // Update task priority
-  const updatePriority = (id, priority) => {
-    setTasks(tasks.map(task =>
-      task.id === id ? { ...task, priority } : task
-    ));
+  // Edit a task in Firestore
+  const editTask = async (id, newText) => {
+    try {
+      await updateDoc(doc(db, 'tasks', id), { text: newText });
+      setTasks(tasks.map(task =>
+        task.id === id ? { ...task, text: newText } : task
+      ));
+    } catch (error) {
+      console.error('Error editing task:', error);
+      alert('Failed to edit task. Please try again.');
+    }
   };
 
-  // Reorder tasks (for drag and drop)
+  // Update task priority in Firestore
+  const updatePriority = async (id, priority) => {
+    try {
+      await updateDoc(doc(db, 'tasks', id), { priority });
+      setTasks(tasks.map(task =>
+        task.id === id ? { ...task, priority } : task
+      ));
+    } catch (error) {
+      console.error('Error updating priority:', error);
+      alert('Failed to update priority. Please try again.');
+    }
+  };
+
+  // Reorder tasks (local only - drag and drop)
   const reorderTasks = (oldIndex, newIndex) => {
     const newTasks = [...tasks];
     const [movedTask] = newTasks.splice(oldIndex, 1);
@@ -170,15 +257,49 @@ function App() {
     return filtered;
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setTasks([]);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   const filteredTasks = getFilteredTasks();
   const activeCount = tasks.filter(task => !task.completed).length;
   const completedCount = tasks.filter(task => task.completed).length;
+
+  // Loading screen
+  if (loading) {
+    return (
+      <div className="loading-screen">
+        <i className="fas fa-spinner fa-spin"></i>
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  // Show auth screen if not logged in
+  if (!user) {
+    return <Auth />;
+  }
 
   return (
     <div className={`App ${darkMode ? 'dark' : ''}`}>
       <div className="header">
         <h1><i className="fas fa-tasks"></i> Task Manager</h1>
         <div className="header-buttons">
+          <span className="user-email" title={user.email}>
+            <i className="fas fa-user-circle"></i> {user.email.split('@')[0]}
+          </span>
+          <button 
+            onClick={handleLogout}
+            className="logout-button"
+            title="Logout"
+          >
+            <i className="fas fa-sign-out-alt"></i>
+          </button>
           <button 
             className="stats-toggle"
             onClick={() => setShowStats(!showStats)}
