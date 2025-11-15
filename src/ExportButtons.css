@@ -25,6 +25,10 @@
   gap: 8px;
 }
 
+.export-btn svg {
+  flex-shrink: 0;
+}
+
 .export-btn.csv {
   background: #27ae60;
   color: white;
@@ -35,6 +39,12 @@
   background: #3498db;
   color: white;
   border-color: #3498db;
+}
+
+.export-btn.pdf {
+  background: #e74c3c;
+  color: white;
+  border-color: #e74c3c;
 }
 
 .export-btn:hover {
@@ -48,6 +58,10 @@
 
 .export-btn.json:hover {
   background: #2980b9;
+}
+
+.export-btn.pdf:hover {
+  background: #c0392b;
 }
 
 @media (max-width: 600px) {
