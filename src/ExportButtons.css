@@ -1,0 +1,62 @@
+.export-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.App.dark .export-buttons {
+  background: #0f3460;
+}
+
+.export-btn {
+  padding: 10px 20px;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.export-btn.csv {
+  background: #27ae60;
+  color: white;
+  border-color: #27ae60;
+}
+
+.export-btn.json {
+  background: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+
+.export-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.export-btn.csv:hover {
+  background: #229954;
+}
+
+.export-btn.json:hover {
+  background: #2980b9;
+}
+
+@media (max-width: 600px) {
+  .export-buttons {
+    flex-direction: column;
+  }
+  
+  .export-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

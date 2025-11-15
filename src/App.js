@@ -5,6 +5,7 @@ import TaskList from './TaskList';
 import FilterButtons from './FilterButtons';
 import Statistics from './Statistics';
 import SearchBar from './SearchBar';
+import ExportButtons from './ExportButtons';
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -152,7 +153,11 @@ const reorderTasks = (oldIndex, newIndex) => {
       </div>
 
       {showStats ? (
+        <>
         <Statistics tasks={tasks} />
+        <ExportButtons tasks={tasks} />
+        </>
+
       ) : (
         <>
           <TaskInput onAddTask={addTask} />
