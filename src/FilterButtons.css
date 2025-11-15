@@ -1,0 +1,75 @@
+.filter-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+  flex-wrap: wrap;
+}
+
+.App.dark .filter-buttons {
+  border-top-color: #1a508b;
+}
+
+.filter-button {
+  padding: 8px 16px;
+  border: 2px solid #e1e8ed;
+  background: white;
+  color: #7f8c8d;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.App.dark .filter-button {
+  background: #0f3460;
+  border-color: #1a508b;
+  color: #b0b0b0;
+}
+
+.filter-icon {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-button:hover {
+  border-color: #3498db;
+  color: #3498db;
+  transform: translateY(-2px);
+}
+
+.App.dark .filter-button:hover {
+  border-color: #5dade2;
+  color: #5dade2;
+}
+
+.filter-button.active {
+  background: #3498db;
+  color: white;
+  border-color: #3498db;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.App.dark .filter-button.active {
+  background: #2874a6;
+  border-color: #2874a6;
+}
+
+@media (max-width: 600px) {
+  .filter-buttons {
+    gap: 6px;
+  }
+
+  .filter-button {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}

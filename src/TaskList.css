@@ -1,0 +1,47 @@
+.task-list {
+  margin-bottom: 20px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.task-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.task-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.App.dark .task-list::-webkit-scrollbar-track {
+  background: #0f3460;
+}
+
+.task-list::-webkit-scrollbar-thumb {
+  background: #bdc3c7;
+  border-radius: 10px;
+}
+
+.task-list::-webkit-scrollbar-thumb:hover {
+  background: #95a5a6;
+}
+
+.App.dark .task-list::-webkit-scrollbar-thumb {
+  background: #1a508b;
+}
+
+.App.dark .task-list::-webkit-scrollbar-thumb:hover {
+  background: #2874a6;
+}
+
+.empty-message {
+  text-align: center;
+  color: #95a5a6;
+  padding: 60px 20px;
+  font-size: 16px;
+}
+
+.App.dark .empty-message {
+  color: #7f8c8d;
+}

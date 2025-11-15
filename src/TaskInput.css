@@ -1,0 +1,164 @@
+.task-input {
+  margin-bottom: 25px;
+}
+
+.input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.task-input-field {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: border-color 0.2s;
+  background: white;
+}
+
+.App.dark .task-input-field {
+  background: #0f3460;
+  border-color: #1a508b;
+  color: #e4e4e4;
+}
+
+.task-input-field:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.advanced-toggle {
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  transition: all 0.2s;
+  color: #7f8c8d;
+}
+
+.App.dark .advanced-toggle {
+  background: #0f3460;
+  border-color: #1a508b;
+  color: #b0b0b0;
+}
+
+.advanced-toggle:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  color: #3498db;
+}
+
+.App.dark .advanced-toggle:hover {
+  background: #1a508b;
+  color: #5dade2;
+}
+
+.add-button {
+  padding: 12px 24px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 0.2s;
+}
+
+.add-button:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+}
+
+.add-button:active {
+  transform: translateY(0);
+}
+
+.advanced-options {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px solid #e1e8ed;
+  flex-wrap: wrap;
+}
+
+.App.dark .advanced-options {
+  background: #0f3460;
+  border-color: #1a508b;
+}
+
+.option-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.option-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.App.dark .option-group label {
+  color: #b0b0b0;
+}
+
+.priority-select,
+.date-input,
+.category-input {
+  padding: 8px 12px;
+  border: 2px solid #e1e8ed;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  transition: border-color 0.2s;
+}
+
+.App.dark .priority-select,
+.App.dark .date-input,
+.App.dark .category-input {
+  background: #16213e;
+  border-color: #1a508b;
+  color: #e4e4e4;
+}
+
+.priority-select:focus,
+.date-input:focus,
+.category-input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+@media (max-width: 600px) {
+  .input-row {
+    flex-wrap: wrap;
+  }
+
+  .task-input-field {
+    width: 100%;
+  }
+
+  .advanced-toggle,
+  .add-button {
+    flex: 1;
+  }
+
+  .advanced-options {
+    flex-direction: column;
+  }
+
+  .option-group {
+    width: 100%;
+  }
+}
