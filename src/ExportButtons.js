@@ -1,13 +1,11 @@
 import './ExportButtons.css';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 
 function ExportButtons({ tasks }) {
   const exportToCSV = () => {
-    // Create CSV header
     const headers = ['Task', 'Status', 'Priority', 'Due Date', 'Category', 'Created'];
     
-    // Create CSV rows
     const rows = tasks.map(task => [
       task.text,
       task.completed ? 'Completed' : 'Active',
@@ -17,13 +15,11 @@ function ExportButtons({ tasks }) {
       new Date(task.createdAt).toLocaleDateString()
     ]);
     
-    // Combine headers and rows
     const csvContent = [
       headers.join(','),
       ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
     ].join('\n');
     
-    // Create download link
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
@@ -53,37 +49,48 @@ function ExportButtons({ tasks }) {
   };
 
   const exportToPDF = () => {
-    const doc = new jsPDF();
-    
-    // Add title
-    doc.setFontSize(20);
-    doc.text('Task Manager - Task List', 14, 20);
-    
-    // Add date
-    doc.setFontSize(10);
-    doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 30);
-    
-    // Prepare table data
-    const tableData = tasks.map(task => [
-      task.text,
-      task.completed ? 'Completed' : 'Active',
-      task.priority || 'medium',
-      task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No date',
-      task.category || 'No category'
-    ]);
-    
-    // Add table
-    doc.autoTable({
-      head: [['Task', 'Status', 'Priority', 'Due Date', 'Category']],
-      body: tableData,
-      startY: 35,
-      theme: 'grid',
-      headStyles: { fillColor: [52, 152, 219] },
-      styles: { fontSize: 9 }
-    });
-    
-    // Save PDF
-    doc.save(`tasks_${new Date().toISOString().split('T')[0]}.pdf`);
+    try {
+      const doc = new jsPDF();
+      
+      // Add title
+      doc.setFontSize(20);
+      doc.text('Task Manager - Task List', 14, 20);
+      
+      // Add date
+      doc.setFontSize(10);
+      doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 30);
+      
+      if (tasks.length === 0) {
+        doc.setFontSize(12);
+        doc.text('No tasks to export', 14, 45);
+      } else {
+        // Prepare table data
+        const tableData = tasks.map(task => [
+          task.text,
+          task.completed ? 'Completed' : 'Active',
+          task.priority || 'medium',
+          task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No date',
+          task.category || 'No category'
+        ]);
+        
+        // Add table - note: autoTable is now a method on doc
+        doc.autoTable({
+          head: [['Task', 'Status', 'Priority', 'Due Date', 'Category']],
+          body: tableData,
+          startY: 35,
+          theme: 'grid',
+          headStyles: { fillColor: [52, 152, 219] },
+          styles: { fontSize: 9 }
+        });
+      }
+      
+      // Save PDF
+      doc.save(`tasks_${new Date().toISOString().split('T')[0]}.pdf`);
+      console.log('PDF exported successfully!');
+    } catch (error) {
+      console.error('PDF Export Error:', error);
+      alert('Failed to export PDF: ' + error.message);
+    }
   };
 
   return (
