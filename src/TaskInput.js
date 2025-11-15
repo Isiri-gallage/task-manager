@@ -6,16 +6,18 @@ function TaskInput({ onAddTask }) {
   const [priority, setPriority] = useState('medium');
   const [dueDate, setDueDate] = useState('');
   const [category, setCategory] = useState('');
+  const [recurring, setRecurring] = useState('none');
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (taskText.trim()) {
-      onAddTask(taskText, priority, dueDate, category);
+      onAddTask(taskText, priority, dueDate, category, recurring);
       setTaskText('');
       setDueDate('');
       setCategory('');
       setPriority('medium');
+      setRecurring('none');
       setShowAdvanced(false);
     }
   };
@@ -75,6 +77,20 @@ function TaskInput({ onAddTask }) {
               placeholder="Work, Personal, etc."
               className="category-input"
             />
+          </div>
+
+          <div className="option-group">
+            <label>Recurring:</label>
+            <select 
+              value={recurring} 
+              onChange={(e) => setRecurring(e.target.value)}
+              className="recurring-select"
+            >
+              <option value="none">None</option>
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+            </select>
           </div>
         </div>
       )}

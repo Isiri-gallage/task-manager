@@ -162,3 +162,28 @@
     width: 100%;
   }
 }
+
+.recurring-select {
+  padding: 8px 12px;
+  border: 2px solid #e1e8ed;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+
+.App.dark .recurring-select {
+  background: #16213e;
+  border-color: #1a508b;
+  color: #e4e4e4;
+}
+
+.recurring-select:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.recurring-select:hover {
+  border-color: #9b59b6;
+}

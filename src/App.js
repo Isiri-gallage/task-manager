@@ -42,8 +42,31 @@ function App() {
     }
   }, [darkMode]);
 
-  // Add a new task
-  const addTask = (text, priority, dueDate, category) => {
+  // Helper function to calculate next due date
+  const calculateNextDueDate = (currentDate, recurring) => {
+    if (!currentDate) return '';
+    
+    const date = new Date(currentDate);
+    
+    switch(recurring) {
+      case 'daily':
+        date.setDate(date.getDate() + 1);
+        break;
+      case 'weekly':
+        date.setDate(date.getDate() + 7);
+        break;
+      case 'monthly':
+        date.setMonth(date.getMonth() + 1);
+        break;
+      default:
+        return currentDate;
+    }
+    
+    return date.toISOString().split('T')[0];
+  };
+
+  // Add a new task with recurring support
+  const addTask = (text, priority, dueDate, category, recurring) => {
     const newTask = {
       id: Date.now(),
       text: text,
@@ -51,16 +74,37 @@ function App() {
       priority: priority,
       dueDate: dueDate,
       category: category,
+      recurring: recurring || 'none',
       createdAt: new Date().toISOString()
     };
     setTasks([newTask, ...tasks]);
   };
 
-  // Toggle task completion
+  // Toggle task completion with recurring support
   const toggleTask = (id) => {
-    setTasks(tasks.map(task =>
-      task.id === id ? { ...task, completed: !task.completed } : task
-    ));
+    const task = tasks.find(t => t.id === id);
+    
+    // If task is recurring and being completed, create a new instance
+    if (!task.completed && task.recurring !== 'none') {
+      const newDueDate = calculateNextDueDate(task.dueDate, task.recurring);
+      const newTask = {
+        ...task,
+        id: Date.now(),
+        dueDate: newDueDate,
+        completed: false,
+        createdAt: new Date().toISOString()
+      };
+      
+      // Mark current task as completed and add new recurring task
+      setTasks([newTask, ...tasks.map(t => 
+        t.id === id ? { ...t, completed: true } : t
+      )]);
+    } else {
+      // Normal toggle for non-recurring tasks
+      setTasks(tasks.map(task =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+      ));
+    }
   };
 
   // Delete a task
@@ -83,12 +127,12 @@ function App() {
   };
 
   // Reorder tasks (for drag and drop)
-const reorderTasks = (oldIndex, newIndex) => {
-  const newTasks = [...tasks];
-  const [movedTask] = newTasks.splice(oldIndex, 1);
-  newTasks.splice(newIndex, 0, movedTask);
-  setTasks(newTasks);
-};
+  const reorderTasks = (oldIndex, newIndex) => {
+    const newTasks = [...tasks];
+    const [movedTask] = newTasks.splice(oldIndex, 1);
+    newTasks.splice(newIndex, 0, movedTask);
+    setTasks(newTasks);
+  };
 
   // Filter and search tasks
   const getFilteredTasks = () => {
@@ -133,7 +177,7 @@ const reorderTasks = (oldIndex, newIndex) => {
   return (
     <div className={`App ${darkMode ? 'dark' : ''}`}>
       <div className="header">
-        <h1><i className="fas fa-tasks"></i> Task Manager </h1>
+        <h1><i className="fas fa-tasks"></i> Task Manager</h1>
         <div className="header-buttons">
           <button 
             className="stats-toggle"
@@ -154,10 +198,9 @@ const reorderTasks = (oldIndex, newIndex) => {
 
       {showStats ? (
         <>
-        <Statistics tasks={tasks} />
-        <ExportButtons tasks={tasks} />
+          <Statistics tasks={tasks} />
+          <ExportButtons tasks={tasks} />
         </>
-
       ) : (
         <>
           <TaskInput onAddTask={addTask} />

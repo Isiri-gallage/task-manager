@@ -85,11 +85,18 @@ function TaskItem({ task, onToggle, onDelete, onEdit, onUpdatePriority }) {
             </span>
             <div className="task-meta">
               {task.category && (
-                <span className="task-category"><i className="fas fa-tag"></i> {task.category}</span>
+                <span className="task-category">
+                  <i className="fas fa-tag"></i> {task.category}
+                </span>
               )}
               {task.dueDate && (
                 <span className={`task-due-date ${isOverdue() ? 'overdue' : ''}`}>
                   <i className="fas fa-calendar"></i> {formatDate(task.dueDate)}
+                </span>
+              )}
+              {task.recurring && task.recurring !== 'none' && (
+                <span className="task-recurring">
+                  <i className="fas fa-rotate"></i> {task.recurring.charAt(0).toUpperCase() + task.recurring.slice(1)}
                 </span>
               )}
             </div>

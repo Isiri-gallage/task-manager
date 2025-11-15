@@ -185,3 +185,23 @@
     justify-content: flex-end;
   }
 }
+
+.task-recurring {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: #9b59b6;
+  color: white;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.task-recurring i {
+  font-size: 11px;
+}
+
+.App.dark .task-recurring {
+  background: #8e44ad;
+}
