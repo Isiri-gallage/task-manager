@@ -81,6 +81,14 @@ function App() {
     ));
   };
 
+  // Reorder tasks (for drag and drop)
+const reorderTasks = (oldIndex, newIndex) => {
+  const newTasks = [...tasks];
+  const [movedTask] = newTasks.splice(oldIndex, 1);
+  newTasks.splice(newIndex, 0, movedTask);
+  setTasks(newTasks);
+};
+
   // Filter and search tasks
   const getFilteredTasks = () => {
     let filtered = tasks;
@@ -158,6 +166,7 @@ function App() {
             onDelete={deleteTask}
             onEdit={editTask}
             onUpdatePriority={updatePriority}
+            onReorder={reorderTasks}
           />
           <div className="stats">
             <span className="stat-item">
