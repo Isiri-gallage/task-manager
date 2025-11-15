@@ -124,7 +124,7 @@ function App() {
   return (
     <div className={`App ${darkMode ? 'dark' : ''}`}>
       <div className="header">
-        <h1><i className="fas fa-tasks"></i> Task Manager Pro</h1>
+        <h1><i className="fas fa-tasks"></i> Task Manager </h1>
         <div className="header-buttons">
           <button 
             className="stats-toggle"
