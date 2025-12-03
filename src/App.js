@@ -178,23 +178,29 @@ function App() {
     }
   };
 
-  // Delete a task from Firestore
-  const deleteTask = async (id) => {
+  // Delete a task from Firestore (Optimistic Update)
+const deleteTask = async (id) => {
+  // Save the current tasks in case we need to rollback
+  const previousTasks = [...tasks];
+  
   try {
-    // Optimistic update - remove from UI immediately
+    // Update UI immediately (optimistic)
     setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
     
-    // Then delete from Firebase
+    // Then delete from Firebase in background
     await deleteDoc(doc(db, 'tasks', id));
   } catch (error) {
     console.error('Error deleting task:', error);
-    alert('Failed to delete task. Please try again.');
     
-    // Reload tasks if delete failed
-    loadTasksFromFirestore();
+    // Rollback on error
+    setTasks(previousTasks);
+    
+    alert('Failed to delete task. Please try again.');
+    throw error;
   }
 };
-    
+
+
 
   // Edit a task in Firestore
   const editTask = async (id, newText) => {
