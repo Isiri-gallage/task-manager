@@ -5,6 +5,7 @@ function TaskInput({ onAddTask }) {
   const [taskText, setTaskText] = useState('');
   const [priority, setPriority] = useState('medium');
   const [dueDate, setDueDate] = useState('');
+  const [dueTime, setDueTime] = useState('');
   const [category, setCategory] = useState('');
   const [recurring, setRecurring] = useState('none');
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -12,9 +13,10 @@ function TaskInput({ onAddTask }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (taskText.trim()) {
-      onAddTask(taskText, priority, dueDate, category, recurring);
+      onAddTask(taskText, priority, dueDate, dueTime, category, recurring);
       setTaskText('');
       setDueDate('');
+      setDueTime('');
       setCategory('');
       setPriority('medium');
       setRecurring('none');
@@ -65,6 +67,16 @@ function TaskInput({ onAddTask }) {
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
               className="date-input"
+            />
+          </div>
+
+          <div className="option-group">
+            <label>Due Time:</label>
+            <input
+              type="time"
+              value={dueTime}
+              onChange={(e) => setDueTime(e.target.value)}
+              className="time-input"
             />
           </div>
 

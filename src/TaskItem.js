@@ -31,12 +31,26 @@ function TaskItem({ task, onToggle, onDelete, onEdit, onUpdatePriority }) {
   };
 
   const isOverdue = () => {
-    if (!task.dueDate || task.completed) return false;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const dueDate = new Date(task.dueDate);
-    return dueDate < today;
-  };
+  if (!task.dueDate || task.completed) return false;
+  
+  const now = new Date();
+  const dueDate = new Date(task.dueDate);
+  
+  // If time is set, compare exact datetime
+  if (task.dueTime) {
+    const [hours, minutes] = task.dueTime.split(':');
+    dueDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    return dueDate < now;
+  }
+  
+  // Otherwise just compare dates
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  dueDate.setHours(0, 0, 0, 0);
+  return dueDate < today;
+};
+
+
 
   const formatDate = (dateString) => {
     if (!dateString) return '';
@@ -53,6 +67,18 @@ function TaskItem({ task, onToggle, onDelete, onEdit, onUpdatePriority }) {
     
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
+
+  const formatTime = (timeString) => {
+  if (!timeString) return '';
+  
+  // Convert 24h to 12h format
+  const [hours, minutes] = timeString.split(':');
+  const hour = parseInt(hours);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const hour12 = hour % 12 || 12;
+  
+  return `${hour12}:${minutes} ${ampm}`;
+};
 
   return (
     <div className={`task-item ${task.completed ? 'completed' : ''} ${isOverdue() ? 'overdue' : ''}`}>
@@ -92,6 +118,11 @@ function TaskItem({ task, onToggle, onDelete, onEdit, onUpdatePriority }) {
               {task.dueDate && (
                 <span className={`task-due-date ${isOverdue() ? 'overdue' : ''}`}>
                   <i className="fas fa-calendar"></i> {formatDate(task.dueDate)}
+                  {task.dueTime && (
+        <span className="task-time">
+          {' '}<i className="fas fa-clock"></i> {formatTime(task.dueTime)}
+        </span>
+      )}
                 </span>
               )}
               {task.recurring && task.recurring !== 'none' && (

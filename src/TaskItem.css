@@ -205,3 +205,14 @@
 .App.dark .task-recurring {
   background: #8e44ad;
 }
+
+.task-time {
+  margin-left: 8px;
+  font-weight: 600;
+  color: inherit;
+}
+
+.task-time i {
+  margin-right: 4px;
+  font-size: 11px;
+}
