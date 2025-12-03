@@ -180,14 +180,21 @@ function App() {
 
   // Delete a task from Firestore
   const deleteTask = async (id) => {
-    try {
-      await deleteDoc(doc(db, 'tasks', id));
-      setTasks(tasks.filter(task => task.id !== id));
-    } catch (error) {
-      console.error('Error deleting task:', error);
-      alert('Failed to delete task. Please try again.');
-    }
-  };
+  try {
+    // Optimistic update - remove from UI immediately
+    setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
+    
+    // Then delete from Firebase
+    await deleteDoc(doc(db, 'tasks', id));
+  } catch (error) {
+    console.error('Error deleting task:', error);
+    alert('Failed to delete task. Please try again.');
+    
+    // Reload tasks if delete failed
+    loadTasksFromFirestore();
+  }
+};
+    
 
   // Edit a task in Firestore
   const editTask = async (id, newText) => {
