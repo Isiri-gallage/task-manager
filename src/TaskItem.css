@@ -216,3 +216,12 @@
   margin-right: 4px;
   font-size: 11px;
 }
+
+.delete-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.delete-button.deleting {
+  pointer-events: none;
+}

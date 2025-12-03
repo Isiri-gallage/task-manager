@@ -4,6 +4,7 @@ import './TaskItem.css';
 function TaskItem({ task, onToggle, onDelete, onEdit, onUpdatePriority }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(task.text);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleEdit = () => {
     if (editText.trim() && editText !== task.text) {
@@ -18,6 +19,18 @@ function TaskItem({ task, onToggle, onDelete, onEdit, onUpdatePriority }) {
     } else if (e.key === 'Escape') {
       setEditText(task.text);
       setIsEditing(false);
+    }
+  };
+
+   const handleDelete = async () => {
+    if (isDeleting) return; // Prevent multiple clicks
+    
+    setIsDeleting(true);
+    try {
+      await onDelete(task.id);
+    } catch (error) {
+      console.error('Delete failed:', error);
+      setIsDeleting(false);
     }
   };
 
@@ -147,18 +160,20 @@ function TaskItem({ task, onToggle, onDelete, onEdit, onUpdatePriority }) {
           <option value="medium">Med</option>
           <option value="high">High</option>
         </select>
-        
         <button 
-  onClick={(e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    onDelete(task.id);
-  }}
-  className="delete-button"
+  onClick={handleDelete}
+  className={`delete-button ${isDeleting ? 'deleting' : ''}`}
   title="Delete task"
+  disabled={isDeleting}
 >
-  <i className="fas fa-trash"></i>
+  {isDeleting ? (
+    <i className="fas fa-spinner fa-spin"></i>
+  ) : (
+    <i className="fas fa-trash"></i>
+  )}
 </button>
+        
+        
       </div>
     </div>
   );
