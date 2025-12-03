@@ -149,12 +149,16 @@ function TaskItem({ task, onToggle, onDelete, onEdit, onUpdatePriority }) {
         </select>
         
         <button 
-          onClick={() => onDelete(task.id)}
-          className="delete-button"
-          title="Delete task"
-        >
-          <i className="fas fa-trash"></i>
-        </button>
+  onClick={(e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    onDelete(task.id);
+  }}
+  className="delete-button"
+  title="Delete task"
+>
+  <i className="fas fa-trash"></i>
+</button>
       </div>
     </div>
   );
