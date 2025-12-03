@@ -113,7 +113,7 @@ function App() {
   };
 
   // Add task to Firestore
-  const addTask = async (text, priority, dueDate, category, recurring) => {
+  const addTask = async (text, priority, dueDate, dueTime,  category, recurring) => {
     const newTask = {
       text,
       completed: false,
