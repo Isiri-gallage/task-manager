@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './TaskInput.css';
+import VoiceInput from './VoiceInput';
 
 function TaskInput({ onAddTask }) {
   const [taskText, setTaskText] = useState('');
@@ -24,14 +25,20 @@ function TaskInput({ onAddTask }) {
     }
   };
 
+  const handleVoiceInput = (text) => {
+  setTaskText(text);
+};
+
   return (
+    <div className="task-input-wrapper">
+    <VoiceInput onVoiceInput={handleVoiceInput} />
     <form onSubmit={handleSubmit} className="task-input">
       <div className="input-row">
         <input
           type="text"
           value={taskText}
           onChange={(e) => setTaskText(e.target.value)}
-          placeholder="What needs to be done?"
+          placeholder="What needs to be done? (or use voice)"
           className="task-input-field"
         />
         <button 
@@ -107,6 +114,7 @@ function TaskInput({ onAddTask }) {
         </div>
       )}
     </form>
+    </div>
   );
 }
 

@@ -1,3 +1,14 @@
+.task-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.task-input {
+  margin-bottom: 0;
+}
+
 .task-input {
   margin-bottom: 25px;
 }
