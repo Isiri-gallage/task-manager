@@ -10,6 +10,8 @@ import FilterButtons from './FilterButtons';
 import Statistics from './Statistics';
 import SearchBar from './SearchBar';
 import ExportButtons from './ExportButtons';
+import NotificationManager from './NotificationManager';
+import NotificationSettings from './NotificationSettings';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -308,6 +310,7 @@ const deleteTask = async (id) => {
           <span className="user-email" title={user.email}>
             <i className="fas fa-user-circle"></i> {user.email.split('@')[0]}
           </span>
+          <NotificationSettings /> 
           <button 
             onClick={handleLogout}
             className="logout-button"
@@ -368,6 +371,7 @@ const deleteTask = async (id) => {
           <FilterButtons currentFilter={filter} onFilterChange={setFilter} />
         </>
       )}
+      <NotificationManager tasks={tasks} /> 
     </div>
   );
 }

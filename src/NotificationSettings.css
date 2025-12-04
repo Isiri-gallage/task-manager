@@ -1,0 +1,125 @@
+.notification-settings {
+  position: relative;
+}
+
+.notification-toggle {
+  padding: 10px 16px;
+  background: #f8f9fa;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s;
+}
+
+.notification-toggle.granted {
+  background: #e8f5e9;
+  border-color: #27ae60;
+}
+
+.notification-toggle.denied {
+  background: #ffebee;
+  border-color: #e74c3c;
+}
+
+.App.dark .notification-toggle {
+  background: #0f3460;
+  border-color: #1a508b;
+}
+
+.notification-toggle:hover {
+  transform: translateY(-2px);
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background: white;
+  border: 2px solid #e1e8ed;
+  border-radius: 12px;
+  padding: 20px;
+  min-width: 300px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+.App.dark .notification-dropdown {
+  background: #16213e;
+  border-color: #1a508b;
+}
+
+.notification-dropdown h4 {
+  margin: 0 0 15px 0;
+  color: #2c3e50;
+  font-size: 18px;
+}
+
+.App.dark .notification-dropdown h4 {
+  color: #e4e4e4;
+}
+
+.notification-status {
+  margin: 10px 0;
+  color: #7f8c8d;
+  font-size: 14px;
+}
+
+.App.dark .notification-status {
+  color: #b0b0b0;
+}
+
+.notification-status strong {
+  color: #2c3e50;
+}
+
+.App.dark .notification-status strong {
+  color: #e4e4e4;
+}
+
+.enable-button {
+  width: 100%;
+  padding: 12px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.2s;
+}
+
+.enable-button:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+}
+
+.notification-info,
+.notification-warning {
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.notification-info {
+  background: #e8f5e9;
+  color: #27ae60;
+}
+
+.App.dark .notification-info {
+  background: #1b5e20;
+  color: #a5d6a7;
+}
+
+.notification-warning {
+  background: #ffebee;
+  color: #e74c3c;
+}
+
+.App.dark .notification-warning {
+  background: #5c1a1a;
+  color: #ff6b6b;
+}
