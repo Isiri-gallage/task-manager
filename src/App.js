@@ -12,7 +12,8 @@ import SearchBar from './SearchBar';
 import ExportButtons from './ExportButtons';
 import NotificationManager from './NotificationManager';
 import NotificationSettings from './NotificationSettings';
-import KanbanBoard from './KanbanBoard';  // ✅ NEW IMPORT
+import KanbanBoard from './KanbanBoard';  
+import PomodoroTimer from './PomodoroTimer';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -22,7 +23,7 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [darkMode, setDarkMode] = useState(false);
   const [showStats, setShowStats] = useState(false);
-  const [viewMode, setViewMode] = useState('list');  // ✅ NEW STATE: 'list' or 'kanban'
+  const [viewMode, setViewMode] = useState('list');  // STATE: 'list' or 'kanban'
 
   // Check authentication state
   useEffect(() => {
@@ -410,6 +411,7 @@ function App() {
         </>
       )}
       <NotificationManager tasks={tasks} /> 
+      <PomodoroTimer />
     </div>
   );
 }
