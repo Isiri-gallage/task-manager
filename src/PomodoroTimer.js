@@ -100,8 +100,8 @@ function PomodoroTimer() {
   const sendNotification = () => {
     if ('Notification' in window && Notification.permission === 'granted') {
       const message = mode === 'work' 
-        ? '🎉 Work session complete! Time for a break.'
-        : '✨ Break time over! Ready to focus?';
+        ? 'Work session complete! Time for a break.'
+        : 'Break time over! Ready to focus?';
       
       new Notification('Pomodoro Timer', {
         body: message,
@@ -159,10 +159,10 @@ function PomodoroTimer() {
 
   const getModeIcon = () => {
     switch(mode) {
-      case 'work': return '💼';
-      case 'shortBreak': return '☕';
-      case 'longBreak': return '🌟';
-      default: return '💼';
+      case 'work': return <i className="fas fa-briefcase"></i>;
+      case 'shortBreak': return <i className="fas fa-coffee"></i>;
+      case 'longBreak': return <i className="fas fa-star"></i>;
+      default: return <i className="fas fa-briefcase"></i>;
     }
   };
 
@@ -208,19 +208,19 @@ function PomodoroTimer() {
                 className={`mode-btn ${mode === 'work' ? 'active' : ''}`}
                 onClick={() => changeMode('work')}
               >
-                💼 Work
+                <i className="fas fa-briefcase"></i> Work
               </button>
               <button
                 className={`mode-btn ${mode === 'shortBreak' ? 'active' : ''}`}
                 onClick={() => changeMode('shortBreak')}
               >
-                ☕ Short Break
+                <i className="fas fa-coffee"></i> Short Break
               </button>
               <button
                 className={`mode-btn ${mode === 'longBreak' ? 'active' : ''}`}
                 onClick={() => changeMode('longBreak')}
               >
-                🌟 Long Break
+                <i className="fas fa-star"></i> Long Break
               </button>
             </div>
 
@@ -272,7 +272,7 @@ function PomodoroTimer() {
             </div>
 
             <div className="pomodoro-info">
-              <p>💡 <strong>How it works:</strong></p>
+              <p><i className="fas fa-lightbulb"></i> <strong>How it works:</strong></p>
               <ul>
                 <li>Work for 25 minutes with full focus</li>
                 <li>Take a 5-minute break</li>
