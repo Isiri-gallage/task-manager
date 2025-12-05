@@ -93,6 +93,31 @@ h1 {
   background: #1a508b;
 }
 
+.view-toggle {
+  padding: 10px 16px;
+  background: #f8f9fa;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s;
+}
+
+.App.dark .view-toggle {
+  background: #0f3460;
+  border-color: #1a508b;
+  color: #e4e4e4;
+}
+
+.view-toggle:hover {
+  background: #e9ecef;
+  transform: translateY(-2px);
+}
+
+.App.dark .view-toggle:hover {
+  background: #1a508b;
+}
+
 .stats {
   text-align: center;
   color: #7f8c8d;

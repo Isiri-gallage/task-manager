@@ -12,6 +12,7 @@ import SearchBar from './SearchBar';
 import ExportButtons from './ExportButtons';
 import NotificationManager from './NotificationManager';
 import NotificationSettings from './NotificationSettings';
+import KanbanBoard from './KanbanBoard';  // ✅ NEW IMPORT
 
 function App() {
   const [user, setUser] = useState(null);
@@ -21,6 +22,7 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [darkMode, setDarkMode] = useState(false);
   const [showStats, setShowStats] = useState(false);
+  const [viewMode, setViewMode] = useState('list');  // ✅ NEW STATE: 'list' or 'kanban'
 
   // Check authentication state
   useEffect(() => {
@@ -115,7 +117,7 @@ function App() {
   };
 
   // Add task to Firestore
-  const addTask = async (text, priority, dueDate, dueTime,  category, recurring) => {
+  const addTask = async (text, priority, dueDate, dueTime, category, recurring) => {
     const newTask = {
       text,
       completed: false,
@@ -124,6 +126,7 @@ function App() {
       dueTime: dueTime || '',
       category,
       recurring: recurring || 'none',
+      status: null,  // ✅ NEW: for Kanban board
       createdAt: new Date().toISOString(),
       userId: user.uid
     };
@@ -153,6 +156,7 @@ function App() {
           dueTime: task.dueTime || '',
           category: task.category,
           recurring: task.recurring,
+          status: null,
           createdAt: new Date().toISOString(),
           userId: user.uid
         };
@@ -161,17 +165,20 @@ function App() {
         const docRef = await addDoc(collection(db, 'tasks'), newTask);
         
         // Mark current task as completed
-        await updateDoc(doc(db, 'tasks', id), { completed: true });
+        await updateDoc(doc(db, 'tasks', id), { completed: true, status: 'done' });
         
         // Update local state
         setTasks([{ id: docRef.id, ...newTask }, ...tasks.map(t => 
-          t.id === id ? { ...t, completed: true } : t
+          t.id === id ? { ...t, completed: true, status: 'done' } : t
         )]);
       } else {
         // Normal toggle for non-recurring tasks
-        await updateDoc(doc(db, 'tasks', id), { completed: !task.completed });
+        await updateDoc(doc(db, 'tasks', id), { 
+          completed: !task.completed,
+          status: !task.completed ? 'done' : task.status
+        });
         setTasks(tasks.map(t =>
-          t.id === id ? { ...t, completed: !t.completed } : t
+          t.id === id ? { ...t, completed: !t.completed, status: !t.completed ? 'done' : t.status } : t
         ));
       }
     } catch (error) {
@@ -181,28 +188,19 @@ function App() {
   };
 
   // Delete a task from Firestore (Optimistic Update)
-const deleteTask = async (id) => {
-  // Save the current tasks in case we need to rollback
-  const previousTasks = [...tasks];
-  
-  try {
-    // Update UI immediately (optimistic)
-    setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
+  const deleteTask = async (id) => {
+    const previousTasks = [...tasks];
     
-    // Then delete from Firebase in background
-    await deleteDoc(doc(db, 'tasks', id));
-  } catch (error) {
-    console.error('Error deleting task:', error);
-    
-    // Rollback on error
-    setTasks(previousTasks);
-    
-    alert('Failed to delete task. Please try again.');
-    throw error;
-  }
-};
-
-
+    try {
+      setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
+      await deleteDoc(doc(db, 'tasks', id));
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      setTasks(previousTasks);
+      alert('Failed to delete task. Please try again.');
+      throw error;
+    }
+  };
 
   // Edit a task in Firestore
   const editTask = async (id, newText) => {
@@ -227,6 +225,24 @@ const deleteTask = async (id) => {
     } catch (error) {
       console.error('Error updating priority:', error);
       alert('Failed to update priority. Please try again.');
+    }
+  };
+
+  // ✅ NEW FUNCTION: Update task status (for Kanban)
+  const updateTaskStatus = async (id, status) => {
+    try {
+      const updates = {
+        status: status,
+        completed: status === 'done'
+      };
+      
+      await updateDoc(doc(db, 'tasks', id), updates);
+      setTasks(tasks.map(t =>
+        t.id === id ? { ...t, ...updates } : t
+      ));
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alert('Failed to update task status. Please try again.');
     }
   };
 
@@ -318,6 +334,14 @@ const deleteTask = async (id) => {
           >
             <i className="fas fa-sign-out-alt"></i>
           </button>
+          {/* ✅ NEW: View Toggle Button */}
+          <button 
+            className="view-toggle"
+            onClick={() => setViewMode(viewMode === 'list' ? 'kanban' : 'list')}
+            title={viewMode === 'list' ? 'Kanban View' : 'List View'}
+          >
+            <i className={`fas fa-${viewMode === 'list' ? 'columns' : 'list'}`}></i>
+          </button>
           <button 
             className="stats-toggle"
             onClick={() => setShowStats(!showStats)}
@@ -347,14 +371,28 @@ const deleteTask = async (id) => {
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
           />
-          <TaskList
-            tasks={filteredTasks}
-            onToggle={toggleTask}
-            onDelete={deleteTask}
-            onEdit={editTask}
-            onUpdatePriority={updatePriority}
-            onReorder={reorderTasks}
-          />
+          
+          {/* ✅ NEW: Conditional rendering based on viewMode */}
+          {viewMode === 'kanban' ? (
+            <KanbanBoard
+              tasks={filteredTasks}
+              onToggle={toggleTask}
+              onDelete={deleteTask}
+              onEdit={editTask}
+              onUpdatePriority={updatePriority}
+              onUpdateStatus={updateTaskStatus}
+            />
+          ) : (
+            <TaskList
+              tasks={filteredTasks}
+              onToggle={toggleTask}
+              onDelete={deleteTask}
+              onEdit={editTask}
+              onUpdatePriority={updatePriority}
+              onReorder={reorderTasks}
+            />
+          )}
+          
           <div className="stats">
             <span className="stat-item">
               <strong>{activeCount}</strong> active
