@@ -177,7 +177,7 @@ function KanbanCard({ task, onToggle, onDelete, onEdit, onUpdatePriority, onUpda
   );
 }
 
-function KanbanColumn({ title, tasks, status, onToggle, onDelete, onEdit, onUpdatePriority, onUpdateStatus }) {
+function KanbanColumn({ title, tasks, status, onToggle, onDelete, onEdit, onUpdatePriority, onUpdateStatus, icon }) {
   const { setNodeRef, isOver } = useDroppable({
     id: `column-${status}`
   });
@@ -188,7 +188,9 @@ function KanbanColumn({ title, tasks, status, onToggle, onDelete, onEdit, onUpda
       ref={setNodeRef}
     >
       <div className="kanban-column-header">
-        <h3>{title}</h3>
+        <h3>
+          <i className={icon}></i> {title}
+        </h3>
         <span className="kanban-column-count">{tasks.length}</span>
       </div>
       <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
@@ -296,9 +298,10 @@ function KanbanBoard({ tasks, onToggle, onDelete, onEdit, onUpdatePriority, onUp
     >
       <div className="kanban-board">
         <KanbanColumn
-          title="📋 To Do"
+          title="To Do"
           tasks={todoTasks}
           status="todo"
+          icon="fas fa-list-ul"
           onToggle={onToggle}
           onDelete={onDelete}
           onEdit={onEdit}
@@ -307,9 +310,10 @@ function KanbanBoard({ tasks, onToggle, onDelete, onEdit, onUpdatePriority, onUp
         />
         
         <KanbanColumn
-          title="⚡ In Progress"
+          title="In Progress"
           tasks={inProgressTasks}
           status="in-progress"
+          icon="fas fa-bolt"
           onToggle={onToggle}
           onDelete={onDelete}
           onEdit={onEdit}
@@ -318,9 +322,10 @@ function KanbanBoard({ tasks, onToggle, onDelete, onEdit, onUpdatePriority, onUp
         />
         
         <KanbanColumn
-          title="✅ Done"
+          title="Done"
           tasks={doneTasks}
           status="done"
+          icon="fas fa-check-circle"
           onToggle={onToggle}
           onDelete={onDelete}
           onEdit={onEdit}

@@ -18,7 +18,7 @@ function NotificationSettings() {
       
       if (result === 'granted') {
         // Show test notification
-        new Notification(' Notifications Enabled!', {
+        new Notification('Notifications Enabled!', {
           body: 'You\'ll now receive reminders for upcoming tasks.',
           icon: '/favicon.ico'
         });
@@ -29,11 +29,11 @@ function NotificationSettings() {
   const getStatusIcon = () => {
     switch (permission) {
       case 'granted':
-        return '🔔';
+        return <i className="fas fa-bell"></i>;
       case 'denied':
-        return '🔕';
+        return <i className="fas fa-bell-slash"></i>;
       default:
-        return '🔔';
+        return <i className="fas fa-bell"></i>;
     }
   };
 
@@ -77,13 +77,13 @@ function NotificationSettings() {
           
           {permission === 'granted' && (
             <p className="notification-info">
-              ✅ You'll receive reminders for tasks due today and 10 minutes before scheduled tasks.
+              <i className="fas fa-check-circle"></i> You'll receive reminders for tasks due today and 10 minutes before scheduled tasks.
             </p>
           )}
           
           {permission === 'denied' && (
             <p className="notification-warning">
-              ⚠️ Notifications are blocked. Enable them in your browser settings.
+              <i className="fas fa-exclamation-triangle"></i> Notifications are blocked. Enable them in your browser settings.
             </p>
           )}
         </div>
