@@ -26,94 +26,97 @@ function TaskInput({ onAddTask }) {
   };
 
   const handleVoiceInput = (text) => {
-  setTaskText(text);
-};
+    setTaskText(text);
+  };
 
   return (
     <div className="task-input-wrapper">
-    <VoiceInput onVoiceInput={handleVoiceInput} />
-    <form onSubmit={handleSubmit} className="task-input">
-      <div className="input-row">
-        <input
-          type="text"
-          value={taskText}
-          onChange={(e) => setTaskText(e.target.value)}
-          placeholder="What needs to be done? (or use voice)"
-          className="task-input-field"
-        />
-        <button 
-          type="button"
-          className="advanced-toggle"
-          onClick={() => setShowAdvanced(!showAdvanced)}
-          title="More options"
-        >
-          {showAdvanced ? '−' : '+'}
-        </button>
-        <button type="submit" className="add-button">Add</button>
-      </div>
-
-      {showAdvanced && (
-        <div className="advanced-options">
-          <div className="option-group">
-            <label>Priority:</label>
-            <select 
-              value={priority} 
-              onChange={(e) => setPriority(e.target.value)}
-              className="priority-select"
-            >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
-
-          <div className="option-group">
-            <label>Due Date:</label>
-            <input
-              type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-              className="date-input"
-            />
-          </div>
-
-          <div className="option-group">
-            <label>Due Time:</label>
-            <input
-              type="time"
-              value={dueTime}
-              onChange={(e) => setDueTime(e.target.value)}
-              className="time-input"
-            />
-          </div>
-
-          <div className="option-group">
-            <label>Category:</label>
+      <form onSubmit={handleSubmit} className="task-input">
+        <div className="input-row">
+          <div className="input-with-mic">
             <input
               type="text"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              placeholder="Work, Personal, etc."
-              className="category-input"
+              value={taskText}
+              onChange={(e) => setTaskText(e.target.value)}
+              placeholder="What needs to be done? (or use voice)"
+              className="task-input-field"
             />
+            {/* Microphone button right beside text box */}
+            <VoiceInput onVoiceInput={handleVoiceInput} />
           </div>
-
-          <div className="option-group">
-            <label>Recurring:</label>
-            <select 
-              value={recurring} 
-              onChange={(e) => setRecurring(e.target.value)}
-              className="recurring-select"
-            >
-              <option value="none">None</option>
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-            </select>
-          </div>
+          <button 
+            type="button"
+            className="advanced-toggle"
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            title="More options"
+          >
+            {showAdvanced ? '−' : '+'}
+          </button>
+          <button type="submit" className="add-button">Add</button>
         </div>
-      )}
-    </form>
+
+        {showAdvanced && (
+          <div className="advanced-options">
+            <div className="option-group">
+              <label>Priority:</label>
+              <select 
+                value={priority} 
+                onChange={(e) => setPriority(e.target.value)}
+                className="priority-select"
+              >
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+
+            <div className="option-group">
+              <label>Due Date:</label>
+              <input
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                className="date-input"
+              />
+            </div>
+
+            <div className="option-group">
+              <label>Due Time:</label>
+              <input
+                type="time"
+                value={dueTime}
+                onChange={(e) => setDueTime(e.target.value)}
+                className="time-input"
+              />
+            </div>
+
+            <div className="option-group">
+              <label>Category:</label>
+              <input
+                type="text"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="Work, Personal, etc."
+                className="category-input"
+              />
+            </div>
+
+            <div className="option-group">
+              <label>Recurring:</label>
+              <select 
+                value={recurring} 
+                onChange={(e) => setRecurring(e.target.value)}
+                className="recurring-select"
+              >
+                <option value="none">None</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+              </select>
+            </div>
+          </div>
+        )}
+      </form>
     </div>
   );
 }
